@@ -1,10 +1,11 @@
 from flask import Flask, request, jsonify, send_from_directory
+import os
 
 app = Flask(__name__)
 
-feedback_list = []
+FEEDBACK_LIST = []
 
-# Serve index.html
+# Serve index.html from frontend folder
 @app.route('/')
 def serve_index():
     return send_from_directory('../frontend', 'index.html')
@@ -14,23 +15,25 @@ def serve_index():
 def serve_frontend(path):
     return send_from_directory('../frontend', path)
 
+# Feedback POST
 @app.route('/feedback', methods=['POST'])
 def submit_feedback():
     data = request.get_json()
     name = data.get('name')
-    email = data.get('email')
     message = data.get('message')
+    email = data.get('email', '')
 
     if not name or not message:
-        return jsonify({"error": "Name and message are required"}), 400
+        return jsonify({"error": "Name and message required"}), 400
 
-    feedback_list.append({"name": name, "email": email, "message": message})
-    print("New Feedback:", feedback_list[-1])
+    FEEDBACK_LIST.append({"name": name, "email": email, "message": message})
+    print("New Feedback:", FEEDBACK_LIST[-1])
     return jsonify({"message": "Feedback received!"}), 200
 
+# Return all feedback
 @app.route('/all-feedback', methods=['GET'])
 def get_feedback():
-    return jsonify(feedback_list)
+    return jsonify(FEEDBACK_LIST)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8080)
