@@ -1,21 +1,46 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Feedback Form</title>
+    <title>User Feedback</title>
 </head>
 <body>
+    <h1>Submit Your Feedback</h1>
+    <form id="feedbackForm">
+        <label>Name:</label><br>
+        <input type="text" id="name" required><br><br>
+        <label>Email:</label><br>
+        <input type="email" id="email"><br><br>
+        <label>Message:</label><br>
+        <textarea id="message" required></textarea><br><br>
+        <button type="submit">Submit</button>
+    </form>
 
-<h2>Feedback Form</h2>
+    <p id="response"></p>
 
-<form id="form">
-  <input type="text" id="name" placeholder="Name" required /><br><br>
-  <input type="email" id="email" placeholder="Email" required /><br><br>
-  <textarea id="feedback" placeholder="Feedback" required></textarea><br><br>
-  <button type="submit">Submit</button>
-</form>
+    <script>
+        const form = document.getElementById('feedbackForm');
+        const responseText = document.getElementById('response');
+        const backendURL = "http://43.205.110.201:8080/feedback";  // Replace with your EC2 IP
 
-<script src="script.js"></script>
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
 
+            const data = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                message: document.getElementById('message').value
+            };
+
+            const res = await fetch(backendURL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            const result = await res.json();
+            responseText.textContent = result.message || result.error;
+            form.reset();
+        });
+    </script>
 </body>
 </html>
-
