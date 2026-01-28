@@ -1,13 +1,18 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 
 app = Flask(__name__)
 
-# In-memory storage for feedback (no database needed)
 feedback_list = []
 
+# Serve index.html
 @app.route('/')
-def home():
-    return "User Feedback Backend Running!"
+def serve_index():
+    return send_from_directory('../frontend', 'index.html')
+
+# Serve other frontend files (JS/CSS)
+@app.route('/<path:path>')
+def serve_frontend(path):
+    return send_from_directory('../frontend', path)
 
 @app.route('/feedback', methods=['POST'])
 def submit_feedback():
@@ -25,10 +30,7 @@ def submit_feedback():
 
 @app.route('/all-feedback', methods=['GET'])
 def get_feedback():
-    # Returns all feedback
     return jsonify(feedback_list)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8080)
-
-
