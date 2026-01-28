@@ -5,15 +5,17 @@ app = Flask(__name__)
 
 FEEDBACK_LIST = []
 
-# Serve index.html from frontend folder
+FRONTEND_PATH = '/home/ec2-user/feedback/frontend'  # Absolute path to your frontend
+
+# Serve index.html
 @app.route('/')
 def serve_index():
-    return send_from_directory('../frontend', 'index.html')
+    return send_from_directory(FRONTEND_PATH, 'index.html')
 
 # Serve other frontend files (JS/CSS)
 @app.route('/<path:path>')
 def serve_frontend(path):
-    return send_from_directory('../frontend', path)
+    return send_from_directory(FRONTEND_PATH, path)
 
 # Feedback POST
 @app.route('/feedback', methods=['POST'])
